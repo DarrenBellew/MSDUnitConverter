@@ -1,0 +1,17 @@
+Units:
+    UnitID Number (5),
+    UnitName Varchar2 (50),
+    CategoryId Number (5); (fk)
+
+Conversion:
+    ConversionID Number (5),
+    Unit1ID Number (5), (fk)
+    Unit2ID Number (5), (fk)
+toFormula Varchar2(50), 
+--the layout of the formula is still foggy, needs more in depth thinking in how it’s going to
+--work
+    Unit Type Varchar2 (10),
+    fromFormula Varchar2(50); (example: )
+Category
+    CategoryID Number (5),
+    CategoryName Varchar2 (50);
