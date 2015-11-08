@@ -1,18 +1,35 @@
 package com.islarf6546.gmail.myapplication;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.DialogFragment;
+import android.app.ListActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends ListActivity {
+
+    private String[] values = {"Measurements", "Liquids", "Currency Exchange"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        /*
+        ArrayAdapter<String> myAdapter = new MyAdapter(
+                this,
+                values);
+        setListAdapter(myAdapter);
+        */
+    }
 
-        
+    protected void onListItemClick(ListView l, View v, int position, long id)  {
+        String itemPicked = String.valueOf(l.getItemAtPosition(position));
+        Toast.makeText(this, "You clicked: " + itemPicked,
+                Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -31,6 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            /*
+            DialogFragment settingsDialog = new MyDialogFragment();
+            myFragment.show(getFragmentManager(), "The Dialog");
+            */
+            DialogFragment settingDialog = new SettingsDialog();
+            settingDialog.show(getFragmentManager(), "Settings Dialog");
+            return true;
+        } else if(id == R.id.exit_the_app)  {
+            DialogFragment exitDialog = new ExitDialog();
+            exitDialog.show(getFragmentManager(), "Exit Dialog");
             return true;
         }
 
