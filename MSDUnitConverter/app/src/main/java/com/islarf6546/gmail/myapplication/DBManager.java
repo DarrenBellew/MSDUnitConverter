@@ -2,12 +2,15 @@ package com.islarf6546.gmail.myapplication;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Scanner;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by YamiVegeta on 08/11/2015.
@@ -25,66 +28,58 @@ public class DBManager {
     public static final String DATABASE_NAME = "UnitConverterDB";
 
     private final Context context;
-    private DatabaseHelper DBHelper;
-    private SQLiteDatabase db;
+    public DatabaseHelper DBHelper;
+    public SQLiteDatabase db;
 
 
 
     public DBManager (Context context)  {
+
         this.context = context;
-        DBHelper = new DatabaseHelper(context);
-        tables = new String[][] {
-                {"Category"},
-                {"CategoryId number(5) primary key",
-                    "CategoryName varchar2(50)"},
-                {"Units"},
-                {"UnitID number(5)",
-                    "UnitName varchar2(50)",
-                    "UnitType varchar2(30)",
-                    "CategoryId Number(5)",
-                    "Foreign key (CategoryId) fk_cat_unit references category (CategoryId)"},//FK
-                {"Conversion"},
-                {"ConversionId number(5)",
-                    "UnitName number(5)",
-                    "Unit1Id number(5)",//FK
-                    "Unit2Id number(5)",//FK
-                    "toFormula varchar2(50)",
-                    "UnitType varchar2(10)",//FK
-                    "fromFormula varchar2(50)",
-                    "Foreign key (UnitName) fk_conv_unit references Units (UnitName)",
-                    "Foreign key (UnitId) fk_conv_unit references Units (UnitId)",
-                    "Foreign key (UnitId) fk_conv_unit references Units (UnitId)"}
-                };
+        DBHelper = new DatabaseHelper(context, this);
     }
 
-    private static class DatabaseHelper extends SQLiteOpenHelper {
-        public DatabaseHelper(Context context) {
+    public static class DatabaseHelper extends SQLiteOpenHelper {
+        private Resources resources;
+        DBManager dbm;
+        public DatabaseHelper(Context context, DBManager dbm) {
             super(context, DATABASE_NAME, null, DATABASE_VERSION);
+            resources = context.getResources();
+            this.dbm = dbm;
         }
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(createDatabase());
+            //try  {
+                sqlExecutor(new Scanner(resources.openRawResource(R.raw.createtables)),db);
+            //}
+            //catch (SQLException e)  {
+            //    e.getStackTrace();
+            //}
+            //try {
+                sqlExecutor(new Scanner(resources.openRawResource(R.raw.insertdata)), db);
+            //}
+            //catch (SQLException e)  {
+            //    e.getStackTrace();
+            //}
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-            //update database structure
+                sqlExecutor(new Scanner(resources.openRawResource(R.raw.createtables)), db);
         }
 
-        public String createDatabase() {
-            String sql = "";
-            for (int i = 0; i < tables.length; i++) {
-                sql += "create table " + tables[i][0] + "(";
-                for (int j = 0; j < tables[i].length; j++) {
-                    sql += tables[i][j];
-                    if (j != tables[i].length - 1) {
-                        sql += ",";
-                    }
+        public void sqlExecutor(Scanner s, SQLiteDatabase db) {
+            StringBuilder commands = new StringBuilder();
+
+            while (s.hasNext()) {
+                String line = s.nextLine();
+                commands.append(line + "\n");
+                if (line.endsWith(");")) {
+                    db.execSQL(commands.toString());
+                    commands = new StringBuilder();
                 }
-                sql += ");";
             }
-            return sql;
         }
     }
     //open and close
@@ -93,11 +88,10 @@ public class DBManager {
         return this;
     }
 
-    public void close()  {
-        this.close();
-    }
+    public void close()  { db.close(); }
 
-    public long insertAny(String THIS_TABLE, String[] cols, String[] data)  {
+
+    public long insertAny(String THIS_TABLE, String[] cols, String[] data) throws SQLException {
         ContentValues vals = new ContentValues();
 
         for(int j=0; j<cols.length; j++)  {
@@ -107,25 +101,41 @@ public class DBManager {
         return db.insert(THIS_TABLE, null, vals);
     }
 
-    public Cursor selectSomething(String THIS_TABLE, String[] columns, String constraint)  {
+    public Cursor selectSomething(String THIS_TABLE, String constraint, String[] columns) throws SQLException  {
+
         Cursor c = db.query(true, THIS_TABLE, columns, constraint,
                 null, null, null, null, null);
         c.moveToFirst();
+
         return c;
     }
 
-    public ArrayList<String> getColumns(String THIS_TABLE)  {
+    public Cursor selectAdvanced(String query, String[] params) throws SQLException {
+        Cursor c;
+        if (StringUtils.countMatches(query, "?") == params.length) {
+            c = db.rawQuery(query, params);
+            c.moveToFirst();
+        }
+        else {
+            throw new SQLException("Incorrect amount of ?:params ratio");
+
+        }
+        return c;
+    }
+
+    public ArrayList<String> getColumns(String THIS_TABLE) throws SQLException {
         //Code Snippet (i)
         ArrayList<String> tableNames = new ArrayList<String>();
 
         String query = "PRAGMA table_info("+THIS_TABLE+")";
+
         Cursor c = db.rawQuery(query, null);
         if(c.moveToFirst())  {
             int i=1;
             do  {
                 tableNames.add(c.getString(1));
                 i+=2;
-            } while(true);
+            } while(c.moveToNext());
         }
         c.close();
         return tableNames;
@@ -139,4 +149,11 @@ public class DBManager {
         }
         return tableNames;
     }
+
+
+
+    //new version; So when i run it, it'll have a database
+    //the method that makes a new version of the database/builds it.
+
+
 }

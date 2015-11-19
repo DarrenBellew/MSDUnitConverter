@@ -7,13 +7,6 @@
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        app:showAsAction="always|withText"
         android:icon="@drawable/settings"/>
-
-    <item
-        android:id="@+id/exit_the_app"
-        android:title="@string/options_exit_text"
-        app:showAsAction="ifRoom|withText"
-        android:icon="@drawable/exit"
-        />
 </menu>
