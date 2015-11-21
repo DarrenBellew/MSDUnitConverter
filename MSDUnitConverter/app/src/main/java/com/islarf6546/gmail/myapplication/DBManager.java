@@ -101,9 +101,9 @@ public class DBManager {
         return db.insert(THIS_TABLE, null, vals);
     }
 
-    public Cursor selectSomething(String THIS_TABLE, String constraint, String[] columns) throws SQLException  {
+    public Cursor selectSomething(String table, String constraint, String[] columns) throws SQLException  {
 
-        Cursor c = db.query(true, THIS_TABLE, columns, constraint,
+        Cursor c = db.query(true, table, columns, constraint,
                 null, null, null, null, null);
         c.moveToFirst();
 
@@ -141,13 +141,23 @@ public class DBManager {
         return tableNames;
     }
 
-    public ArrayList<String> getTables()  {
-        ArrayList<String> tableNames = new ArrayList<String>();
-
-        for(int i=0; i<tables.length; i++) {
-            tableNames.add(tables[i][0]);
+    public ArrayList<String> getColumns(Context con, String tableName)  {
+        Cursor c;
+        ArrayList<String> data = new ArrayList<String>();
+        try {
+            open();
+            c = db.query(tableName, null, null, null, null, null, null);
+            c.moveToFirst();
+            for(int i=0; i<c.getCount(); i++)  {
+                data.add(c.getString(i));
+            }
+            close();
         }
-        return tableNames;
+        catch (SQLException e) {
+            e.printStackTrace();
+            data.add("ERROR");
+        }
+        return data;
     }
 
 

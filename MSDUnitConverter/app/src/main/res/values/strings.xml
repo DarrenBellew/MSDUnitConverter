@@ -5,4 +5,9 @@
     <string name="action_settings">Settings</string>
     <string name="options_exit_text">Exit</string>
     <string name="selected_category_value">selectedValue</string>
+    <string name="title_activity_conversion">Conversion</string>
+    <string name="text_view_answer">Answer</string>
+    <string name="button_calculate">Calculate</string>
+    <string name="button_swap_conversion">Swap Conversion</string>
+    <string name="edit_text_value">Value</string>
 </resources>

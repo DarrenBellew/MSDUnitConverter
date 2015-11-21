@@ -41,6 +41,8 @@ public class MainActivity extends Activity {
         catch (SQLException e)  {
             e.getStackTrace();
             categories.add("DATABASE READ CATEGORIES ERROR!");
+            MyUtilities.makeLToast(this, "No categories exist? try reinstall the app completely!");
+            finish();
         }
         finally {
             dbm.close();
@@ -62,24 +64,11 @@ public class MainActivity extends Activity {
                                     long id) {
                 String itemPicked = String.valueOf(parent.getItemAtPosition(position));
 
-                Intent i = new Intent(getApplicationContext(), selectCategories.class);
+                Intent i = new Intent(getApplicationContext(), SelectCategories.class);
                 i.putExtra("itemPicked", itemPicked);
                 startActivity(i);
             }
         });
-    }
-
-
-
-    protected void onListItemClick(ListView l, View v, int position, long id)  {
-        String itemPicked = String.valueOf(l.getItemAtPosition(position));
-        Toast.makeText(this, "You clicked: " + itemPicked,
-                Toast.LENGTH_SHORT).show();
-
-        //Intent i = new Intent(this, selectCategories.class);
-        //i.putExtra("itemPicked",itemPicked);
-        //startActivity(i);
-
     }
 
     @Override
