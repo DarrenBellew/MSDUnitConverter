@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.sql.SQLException;
@@ -62,11 +63,13 @@ public class MyUtilities {
         return columns;
     }
 
-    public static Map<String, String> assignCursorToMap(ArrayList<String> keys, Cursor values) {
+    public static Map<String, String> assignAListToMap(ArrayList<String> keys, ArrayList<String> values) {
         Map<String, String> data = new HashMap<String, String>();
 
-        for(int i=0; i<values.getCount(); i++)  {
-            data.put(keys.get(i), values.getString(i));
+        for(int i=0; i<values.size(); i++)  {
+            String temp = values.get(i);
+            data.put(keys.get(i), temp);
+            //Log.i("Data: " + keys.get(i), " Value: " + temp);
         }
         return data;
     }

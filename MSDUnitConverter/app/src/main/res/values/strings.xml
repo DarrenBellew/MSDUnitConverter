@@ -10,4 +10,5 @@
     <string name="button_calculate">Calculate</string>
     <string name="button_swap_conversion">Swap Conversion</string>
     <string name="edit_text_value">Value</string>
+    <string name="value_3_temp">Value 3</string>
 </resources>

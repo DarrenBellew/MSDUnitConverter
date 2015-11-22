@@ -18,20 +18,6 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
-    <EditText
-        android:id="@+id/edit_text_value_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="10"
-        android:hint="@string/edit_text_value"
-        android:layout_below="@+id/button_swap_conversion"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp"
-        android:layout_alignRight="@+id/edit_text_value_1"
-        android:layout_alignEnd="@+id/edit_text_value_1" />
-
 
 
     <Button
@@ -44,23 +30,13 @@
         android:layout_below="@+id/edit_text_value_1"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:id="@+id/button_calculate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/button_calculate"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
-
     <TextView
-        android:id="@+id/text_view_answer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_view_answer"
-        android:layout_marginTop="25dp"
-
-        android:layout_below="@+id/button_calculate"
-        android:layout_centerHorizontal="true"
+        android:id="@+id/conv"
+        android:hint="@string/edit_text_value"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
 </RelativeLayout>

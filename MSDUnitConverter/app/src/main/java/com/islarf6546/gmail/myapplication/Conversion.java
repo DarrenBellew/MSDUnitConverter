@@ -1,6 +1,8 @@
 package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
@@ -8,9 +10,13 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,87 +25,72 @@ import java.util.Map;
 public class Conversion extends Activity {
 
     EditText value1;
-    EditText value2;
-
-    Map<String, String> conversionData = new HashMap<>();
+    TextView answer;
+    Button swap;
+    boolean convSwapped = false;
     String valName1;
     String valName2;
+    String toFormula;
+    String fromFormula;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_conversion);
-        final int conversionId = getIntent().getExtras().getInt("conversionId");
         valName1 = getIntent().getExtras().getString("unit1Name");
         valName2 = getIntent().getExtras().getString("unit2Name");
-        value1 = (EditText) findViewById(R.id.edit_text_value_1);
-        value2 = (EditText) findViewById(R.id.edit_text_value_2);
+        toFormula = getIntent().getExtras().getString("toFormula");
+        fromFormula = getIntent().getExtras().getString("fromFormula");
 
+        value1 = (EditText) findViewById(R.id.edit_text_value_1);
+        answer = (TextView) findViewById(R.id.conv);
+        swap = (Button) findViewById(R.id.button_swap_conversion);
+        swap.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String temp;
+                temp = value1.getText().toString();
+                value1.setText(answer.getText());
+                answer.setText(temp);
+                temp = value1.getHint().toString();
+                value1.setHint(answer.getHint());
+                answer.setHint(temp);
+                swap.setText(temp);
+                convSwapped = !convSwapped;
+            }
+        });
         //change listeners
         value1.addTextChangedListener(new TextWatcher(){
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                value1.addTextChangedListener(this);
+                //value1.addTextChangedListener(this);
             }
             @Override
             public void afterTextChanged(Editable s) {
-                value1.removeTextChangedListener(this);
+                if(!s.toString().isEmpty()) {
+                    Log.i("REACHES ON", "YES");
+                    float value;
+                    int value2;
+                    value = (Float.valueOf(s.toString()));
 
+                    if (convSwapped) {
+                        answer.setText(Double.toString(MathsParser.calculate(toFormula, value)));
+                    } else {
+                        answer.setText(Double.toString(MathsParser.calculate(fromFormula, value)));
+                    }
+
+                }
+                else  {
+
+                    answer.setText("");
+                }
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                value1.removeTextChangedListener(this);
-                value2.removeTextChangedListener(this);
-                Log.i("REACHES ON", "YES");
-                float value;
-                value = (Float.valueOf(s.toString()));
-                String form = conversionData.get("toFormula");
-                value2.setText(Double.toString(MathsParser.calculate("a/100", value)));
-                value1.addTextChangedListener(this);
-                value2.addTextChangedListener(this); // you register again for listener callbacks
+                //value1.removeTextChangedListener(this);
             }
         });
 
-        value2.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                value2.addTextChangedListener(this);
-            }
-            @Override
-            public void afterTextChanged(Editable s) {
-                value2.removeTextChangedListener(this);
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                value1.removeTextChangedListener(this);
-                value2.removeTextChangedListener(this);
-                Log.i("REACHES ON", "YES");
-                float value;
-                value = (Float.valueOf(s.toString()));
-                //String form = conversionData.get("fromFormula");
-                value1.setText(Double.toString(MathsParser.calculate("a*100", value)));
-                value1.addTextChangedListener(this);
-                value2.addTextChangedListener(this); // you register again for listener callbacks
-            }
-        });
-
-
-
-        Cursor c;
-        try {
-            c = MyUtilities.selectAdvanced(this, "select * from conversion where conversionid = ?", new String[]{"" + conversionId});
-            if (conversionData instanceof HashMap) {
-                conversionData = MyUtilities.assignCursorToMap(MyUtilities.getColumns(this, "conversion"), c);
-            }
-
-            value1.setHint(valName1);
-            value2.setHint(valName2);
-
-        } catch (SQLException e) {
-            e.getStackTrace();
-            MyUtilities.makeSToast(this, "Unknown database error");
-            finish();
-        }
 
     }
 

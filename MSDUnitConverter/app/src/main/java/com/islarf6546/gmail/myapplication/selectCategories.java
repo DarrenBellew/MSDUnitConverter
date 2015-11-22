@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -26,6 +27,8 @@ public class SelectCategories extends ListActivity {
     Map<String, Integer> conversionids = new HashMap<String, Integer>();
     String valName1 = "";
     String valName2 = "";
+    String toFormula = "";
+    String fromFormula = "";
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         //String itemPicked = Intent.getExtras().getString("itemPicked");
@@ -43,7 +46,8 @@ public class SelectCategories extends ListActivity {
 
             String clause = "select con.conversionId as Conversion, " +
                     "(select u1.unitName from units as u1 where u1.unitId = con.unit1Id) as Unit1Name, " +
-                    "(select u2.unitName from units as u2 where u2.unitId = con.unit2Id) as Unit2Name from conversion as con " +
+                    "(select u2.unitName from units as u2 where u2.unitId = con.unit2Id) as Unit2Name, " +
+                    "con.toFormula, con.fromFormula from conversion as con " +
                     "inner join category as cat on (cat.categoryId = con.categoryId) " +
                     "where cat.categoryname = ?";
 
@@ -58,6 +62,10 @@ public class SelectCategories extends ListActivity {
                     valName1 = c.getString(1);
                     valName2 = c.getString(2);
                     String val = valName2 + " <-> " + valName1;
+                    toFormula = c.getString(3);
+                    fromFormula = c.getString(4);
+                    Log.i("to Formula: ", toFormula);
+                    Log.i("from Formula: ", fromFormula);
 
 
                     conversionids.put(val, c.getInt(0));
@@ -104,10 +112,11 @@ public class SelectCategories extends ListActivity {
                 //String itemPicked = String.valueOf(parent.getItemAtPosition(position));
 
                 Intent i = new Intent(getApplicationContext(), Conversion.class);
-
-                i.putExtra("conversionId", categoryId);
+                //Send it via intent; why run a query to select data I've selecting already in this activity :)
                 i.putExtra("unit1Name", valName1);
                 i.putExtra("unit2Name", valName2);
+                i.putExtra("fromFormula", fromFormula);
+                i.putExtra("toFormula", toFormula);
                 startActivity(i);
             }
         });
