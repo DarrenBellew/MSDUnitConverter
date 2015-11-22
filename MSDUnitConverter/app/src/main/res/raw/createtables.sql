@@ -5,8 +5,7 @@ create table Category(
 
 create table Units  (
     UnitId integer(5) primary key,
-    UnitName varchar(50),
-    UnitType varchar(30)
+    UnitName varchar(50)
 );
 
 create table Conversion  (

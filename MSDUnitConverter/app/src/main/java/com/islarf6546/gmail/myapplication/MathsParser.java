@@ -10,8 +10,8 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class MathsParser {
 
-    public static double calculate(String formula, float value)  {
-        return eval(formula.replaceAll("a", ""+value));
+    public static double calculate(String formula, String value)  {
+        return eval(formula.replaceAll("a", value));
     }
 
     private static double eval(final String formula) {

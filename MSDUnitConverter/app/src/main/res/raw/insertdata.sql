@@ -4,9 +4,9 @@ insert into category (categoryid, CategoryName)
     values
     (1, "Measurements"), (2, "Liquids"), (3, "Currency");
 
-insert into units (unitid, UnitName, UnitType)
+insert into units (unitid, UnitName)
     values
-    (1, "Centimeter", "int"), (2, "Meter", "int");
+    (1, "Centimeter"), (2, "Meter");
 
 insert into conversion (conversionid, Unit1Id, Unit2Id, toFormula, fromFormula, CategoryId)
     values

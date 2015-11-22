@@ -1,7 +1,6 @@
 package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
-import android.app.DialogFragment;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -12,7 +11,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -20,7 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends Activity {
 
 
-    ArrayList<String> categories = new ArrayList<String>();//new ArrayAdapter<String>();
+    ArrayList<String> categories = new ArrayList<>();//new ArrayAdapter<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("tag", "text");
@@ -84,8 +82,6 @@ public class MainActivity extends Activity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-        MyUtilities m = new MyUtilities();
-        DialogFragment d;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             MyUtilities.makeSToast(this, "Settings Button");

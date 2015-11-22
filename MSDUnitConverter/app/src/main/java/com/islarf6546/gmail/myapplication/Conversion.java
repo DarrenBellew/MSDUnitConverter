@@ -16,6 +16,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,22 +64,31 @@ public class Conversion extends Activity {
         });
         //change listeners
         value1.addTextChangedListener(new TextWatcher(){
+            String old;
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
                 //value1.addTextChangedListener(this);
+                old = s.toString();
             }
             @Override
             public void afterTextChanged(Editable s) {
                 if(!s.toString().isEmpty()) {
                     Log.i("REACHES ON", "YES");
-                    float value;
-                    int value2;
+                    double value;
                     value = (Float.valueOf(s.toString()));
+                    if (Double.isInfinite(value)) {
+                        value1.setText(old);
+                        MyUtilities.makeSToast(getApplicationContext(), "Number too large");
+                    }
+                    else  {
+                        DecimalFormat df = new DecimalFormat("#.########");
+                        String val = df.format(value);
 
-                    if (convSwapped) {
-                        answer.setText(Double.toString(MathsParser.calculate(toFormula, value)));
-                    } else {
-                        answer.setText(Double.toString(MathsParser.calculate(fromFormula, value)));
+                        if (convSwapped) {
+                            answer.setText(Double.toString(MathsParser.calculate(toFormula, val)));
+                        } else {
+                            answer.setText(Double.toString(MathsParser.calculate(fromFormula, val)));
+                        }
                     }
 
                 }
