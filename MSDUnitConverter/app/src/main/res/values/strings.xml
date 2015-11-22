@@ -11,4 +11,6 @@
     <string name="button_swap_conversion">Swap Conversion</string>
     <string name="edit_text_value">Value</string>
     <string name="value_3_temp">Value 3</string>
+    <string name="menu_create_conversion">Create Conversion</string>
+    <string name="title_activity_create_conversion">CreateConversion</string>
 </resources>

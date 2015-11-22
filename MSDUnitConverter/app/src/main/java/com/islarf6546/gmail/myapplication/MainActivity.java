@@ -88,17 +88,13 @@ public class MainActivity extends Activity {
         DialogFragment d;
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            /*d= m.makeDialog(this, "Settings Dialog", "This is a pracitce settings response", "ok", "Cancel");
-            d.show(getFragmentManager(), "Settings Dialog");
-            if(DialogMaker.getResult())  {
-                MyUtilities.makeSToast(this, "You pressed ok");
-            }
-            else  {
-                MyUtilities.makeSToast(this, "You pressed cancel");
-            }*/
-
             MyUtilities.makeSToast(this, "Settings Button");
             return true;
+        }
+        else if(id == R.id.create_conversion)  {
+            Intent i = new Intent(getApplicationContext(), CreateConversion.class);
+            startActivity(i);
+
         }
         return super.onOptionsItemSelected(item);
     }

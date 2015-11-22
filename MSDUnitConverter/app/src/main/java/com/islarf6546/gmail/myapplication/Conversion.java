@@ -44,7 +44,9 @@ public class Conversion extends Activity {
         fromFormula = getIntent().getExtras().getString("fromFormula");
 
         value1 = (EditText) findViewById(R.id.edit_text_value_1);
+        value1.setHint(valName1);
         answer = (TextView) findViewById(R.id.conv);
+        answer.setHint(valName2);
         swap = (Button) findViewById(R.id.button_swap_conversion);
         swap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -114,6 +116,10 @@ public class Conversion extends Activity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        return false;
     }
     /*
     private float getAnswer(float var1, float var2, String formula)  {

@@ -24,6 +24,10 @@
             android:name=".Conversion"
             android:label="@string/title_activity_conversion" >
         </activity>
+        <activity
+            android:name=".CreateConversion"
+            android:label="@string/title_activity_create_conversion" >
+        </activity>
     </application>
 
 </manifest>

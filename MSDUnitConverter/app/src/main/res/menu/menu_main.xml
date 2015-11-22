@@ -7,6 +7,13 @@
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        app:showAsAction="always|withText"
+        app:showAsAction="ifRoom|withText"
         android:icon="@drawable/settings"/>
+
+    <item
+        android:id="@+id/create_conversion"
+        android:title="@string/menu_create_conversion"
+        android:orderInCategory="101"
+        app:showAsAction="never"
+        />
 </menu>
