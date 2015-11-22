@@ -74,7 +74,7 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
-        if(item == "New")  {
+        if(item.equals("New"))  {
             categoryName.setVisibility(View.VISIBLE);
         }
         else  {
