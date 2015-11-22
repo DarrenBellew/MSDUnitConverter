@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -12,6 +13,8 @@ import android.widget.EditText;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+
+//On text change infinite loop fix reference: http://stackoverflow.com/questions/7222944/changing-text-in-android-on-text-change-causes-overflow-error
 
 public class Conversion extends Activity {
 
@@ -21,6 +24,7 @@ public class Conversion extends Activity {
     Map<String, String> conversionData = new HashMap<>();
     String valName1;
     String valName2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,44 +33,53 @@ public class Conversion extends Activity {
         valName1 = getIntent().getExtras().getString("unit1Name");
         valName2 = getIntent().getExtras().getString("unit2Name");
         value1 = (EditText) findViewById(R.id.edit_text_value_1);
+        value2 = (EditText) findViewById(R.id.edit_text_value_2);
+
+        //change listeners
         value1.addTextChangedListener(new TextWatcher(){
             @Override
-            public void afterTextChanged(Editable s)  {
-            }
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after)  {
-            }
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int arg3)  {
-                float value;
-                String text = value1.getText().toString();
-                value = Float.valueOf(text);
-                MathsParser m;
-                String form = conversionData.get("toFormula");
-                m = new MathsParser(form, value);
-                value2.setText(Double.toString(m.eval()));
-            }
-        });
-        value2 = (EditText) findViewById(R.id.edit_text_value_2);
-        value2.setFocusable(false);
-        value2.addTextChangedListener(new TextWatcher() {
-            @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
+                value1.addTextChangedListener(this);
             }
             @Override
             public void afterTextChanged(Editable s) {
+                value1.removeTextChangedListener(this);
 
             }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                value1.removeTextChangedListener(this);
+                value2.removeTextChangedListener(this);
+                Log.i("REACHES ON", "YES");
                 float value;
-                String text = value1.getText().toString();
-                value = Float.valueOf(text);
-                MathsParser m;
+                value = (Float.valueOf(s.toString()));
                 String form = conversionData.get("toFormula");
-                m = new MathsParser(form, value);
-                value2.setText(Double.toString(m.eval()));
+                value2.setText(Double.toString(MathsParser.calculate("a/100", value)));
+                value1.addTextChangedListener(this);
+                value2.addTextChangedListener(this); // you register again for listener callbacks
+            }
+        });
+
+        value2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                value2.addTextChangedListener(this);
+            }
+            @Override
+            public void afterTextChanged(Editable s) {
+                value2.removeTextChangedListener(this);
+            }
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                value1.removeTextChangedListener(this);
+                value2.removeTextChangedListener(this);
+                Log.i("REACHES ON", "YES");
+                float value;
+                value = (Float.valueOf(s.toString()));
+                //String form = conversionData.get("fromFormula");
+                value1.setText(Double.toString(MathsParser.calculate("a*100", value)));
+                value1.addTextChangedListener(this);
+                value2.addTextChangedListener(this); // you register again for listener callbacks
             }
         });
 

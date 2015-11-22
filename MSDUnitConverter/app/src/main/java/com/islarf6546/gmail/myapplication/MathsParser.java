@@ -9,21 +9,12 @@ import org.apache.commons.lang3.StringUtils;
  * Created by YamiVegeta on 21/11/2015.
  */
 public class MathsParser {
-    String formula;
-    float value;
 
-    public MathsParser(String formula, float value)  {
-
-        this.value = value;
-        replaceValues();
+    public static double calculate(String formula, float value)  {
+        return eval(formula.replaceAll("a", ""+value));
     }
 
-    private void replaceValues()  {
-        formula = formula.replaceAll("a", Float.toString(value));
-    }
-
-
-    public double eval() {
+    private static double eval(final String formula) {
         class Parser {
             int pos = -1, c;
 
