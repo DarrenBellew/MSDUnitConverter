@@ -93,7 +93,8 @@ public class MyUtilities {
         String[] column = {col};
         Cursor c;
         try {
-            c = queryAdvanced(context, table, column);
+            c = MyUtilities.selectSomething(context, table, "", column);
+            //c = queryAdvanced(context, table, column);
         }
         catch (SQLException e)  {
             e.printStackTrace();

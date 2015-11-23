@@ -306,7 +306,7 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
                         try  {
                             tempName = categoryName.getText().toString();
                             nextId = MyUtilities.getNextId(this, "units", "unitid", 1);
-                            MyUtilities.insertSomething(this, "categories", new String[]{"categoryid", "categoryname"}, new String[]{Integer.toString(nextId), tempName});
+                            MyUtilities.insertSomething(this, "category", new String[]{"categoryid", "categoryname"}, new String[]{Integer.toString(nextId), tempName});
                             items.put("categoryid", Integer.toString(nextId));
                         }
                         catch(SQLException e)  {
@@ -325,6 +325,8 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
                     String[] itemsToPut = {items.get("conversionid"), items.get("unit1id"), items.get("units2id"), items.get("toformula"), items.get("fromformula"), items.get("categoryid")};
                     try {
                         MyUtilities.insertSomething(this, "conversion", new String[]{"conversionid", "Unit1Id", "Unit2Id", "toFormula", "fromFormula", "CategoryId"}, itemsToPut);
+                        MyUtilities.makeSToast(this, "Conversion successfully created");
+                        finish();
                     }
                     catch(SQLException e)  {
                         e.printStackTrace();
