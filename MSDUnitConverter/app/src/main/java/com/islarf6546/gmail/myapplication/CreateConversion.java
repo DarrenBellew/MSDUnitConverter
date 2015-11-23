@@ -3,6 +3,7 @@ package com.islarf6546.gmail.myapplication;
 import android.app.Activity;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,6 +76,7 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
         //this also sets the Map declared above.
         ArrayAdapter<String> adapterUnits = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
         adapterUnits.addAll(getUnits());
+        adapterUnits.add("New");
         unit1Spinner.setAdapter(adapterUnits);
         unit1Spinner.setOnItemSelectedListener(this);
         unit2Spinner.setAdapter(adapterUnits);
@@ -154,30 +156,53 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
+        Log.i("Item at position: " + position, item);
 
-        switch(view.getId()) {
+        /*
+        +    @Override
++    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
++        String item = parent.getItemAtPosition(position).toString();
++        if(item == "New")  {
++            categoryName.setVisibility(View.VISIBLE);
++        }
++        else  {
++            categoryName.setVisibility(View.GONE);
++        }
++    }
+         */
+        switch(parent.getId()) {
             case (R.id.spinner_categories): {
                 if (item.equals("New")) {
+                    Log.i("Category name set", "Visible");
                     categoryName.setVisibility(View.VISIBLE);
                 } else {
+                    Log.i("Category name set", "INVISIBLE");
                     categoryName.setVisibility(View.INVISIBLE);
                 }
+                break;
             }
             case (R.id.spinner_unit_1): {
                 if (item.equals("New"))  {
+                    Log.i("unit 1 was set to: ", "Visible");
                     unit1Name.setVisibility(View.VISIBLE);
                 }
                 else  {
                     unit1Name.setVisibility(View.INVISIBLE);
                 }
+                break;
             }
             case (R.id.spinner_unit_2):  {
                 if(item.equals("New"))  {
+                    Log.i("unit 2 was set to: ", "Visible");
                     unit2Name.setVisibility(View.VISIBLE);
                 }
                 else  {
                     unit2Name.setVisibility(View.INVISIBLE);
                 }
+                break;
+            }
+            default:  {
+                Log.i("Something Happened: ",""+view.getId());
             }
         }
 

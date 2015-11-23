@@ -1,15 +1,7 @@
 package com.islarf6546.gmail.myapplication;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import java.sql.SQLException;
@@ -17,28 +9,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by YamiVegeta on 15/11/2015.
- */
 public class MyUtilities {
-    private static Toast toast;
+    //private static Toast toast;
     public static void makeSToast(Context context, String text)  {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
     }
-    public static void makeSToast(Context context, String text, int duration)  {
+    /*public static void makeSToast(Context context, String text, int duration)  {
         Toast.makeText(context, text, duration).show();
-    }
+    }*/
     public static void makeLToast(Context context, String text)  {
         Toast.makeText(context, text, Toast.LENGTH_LONG).show();
     }
 
-
-    public static void makeLToast(Context context, String text, int duration)  {
+    /*public static void makeLToast(Context context, String text, int duration)  {
         Toast.makeText(context, text, duration).show();
-    }
+    }*/
 
     //Doesn't work, was for testing, couldn't get this to work.
-    public DialogFragment makeDialog(Context context, String title, String message, String posButton, String negButton)  {
+    /*public DialogFragment makeDialog(Context context, String title, String message, String posButton, String negButton)  {
         Bundle b = new Bundle();
         b.putString("title", title);
         b.putString("message", message);
@@ -48,7 +36,7 @@ public class MyUtilities {
         DialogFragment m=new DialogMaker();
         m.setArguments(b);
         return m;
-    }
+    }*/
 
     public static void insertSomething(Context context, String tableName, String[] columns, String[] data) throws SQLException  {
         DBManager dbm = new DBManager(context);
@@ -127,21 +115,4 @@ public class MyUtilities {
         }
         return last;
     }
-
-    public static int nextIdOf(int[] array)  {
-        int last = 1;
-
-        for (int temp : array) {
-            if (temp - last > 1) {
-                break;
-            }
-            last = temp;
-        }
-        return last+1;
-    }
-
-
-
-
-
 }

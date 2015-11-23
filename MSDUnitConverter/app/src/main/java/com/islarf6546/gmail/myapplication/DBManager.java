@@ -93,13 +93,13 @@ public class DBManager {
 
 
     public long insertAny(String table_name, String[] cols, String[] data) throws SQLException {
-        ContentValues vals = new ContentValues();
+        ContentValues values = new ContentValues();
 
         for(int j=0; j<cols.length; j++)  {
-            vals.put(cols[j], data[j]);
+            values.put(cols[j], data[j]);
         }
 
-        return db.insert(table_name, null, vals);
+        return db.insert(table_name, null, values);
     }
 
     public Cursor selectSomething(String table, String constraint, String[] columns) throws SQLException  {

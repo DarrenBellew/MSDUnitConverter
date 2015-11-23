@@ -36,7 +36,7 @@ public class MainActivity extends Activity {
             Cursor c = dbm.selectSomething("category", "", new String[]{"categoryId", "CategoryName"});
             while (!c.isAfterLast()) {
                 categoryMap.put(c.getString(1), c.getInt(0));
-                categoriesList.add(c.getString(0));
+                categoriesList.add(c.getString(1));
                 c.moveToNext();
             }
         }
