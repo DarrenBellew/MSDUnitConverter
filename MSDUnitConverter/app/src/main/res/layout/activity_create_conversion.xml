@@ -47,7 +47,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_view_to_formula"
+        android:hint="@string/text_view_to_formula"
         android:id="@+id/text_view_to_formula"
         android:layout_below="@+id/edit_text_unit_2"
         android:layout_alignParentLeft="true"
@@ -56,7 +56,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/text_view_from_formula"
+        android:hint="@string/text_view_from_formula"
         android:id="@+id/text_view_from_formula"
         android:layout_below="@+id/nextToFormula"
         android:layout_alignParentLeft="true"
@@ -69,7 +69,9 @@
         android:spinnerMode="dropdown"
         android:layout_below="@+id/text_view_to_formula"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button_create_conversion"
+        android:layout_alignEnd="@+id/button_create_conversion" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -77,6 +79,55 @@
         android:id="@+id/nextFromFormula"
         android:layout_below="@+id/text_view_from_formula"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/button_create_conversion"
+        android:layout_alignEnd="@+id/button_create_conversion" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_create_conversion"
+        android:id="@+id/button_create_conversion"
+        android:layout_below="@+id/nextFromFormula"
+        android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_add_formula"
+        android:id="@+id/add_to_form"
+        android:layout_alignTop="@+id/nextToFormula"
+        android:layout_toRightOf="@+id/nextToFormula"
+        android:layout_toEndOf="@+id/nextToFormula"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_add_formula"
+        android:id="@+id/add_from_form"
+        android:layout_alignTop="@+id/nextFromFormula"
+        android:layout_alignLeft="@+id/add_to_form"
+        android:layout_alignStart="@+id/add_to_form" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_form_undo"
+        android:id="@+id/undo_to_form"
+        android:layout_alignBottom="@+id/add_to_form"
+        android:layout_toRightOf="@+id/add_to_form"
+        android:layout_toEndOf="@+id/add_to_form"
+        android:layout_alignTop="@+id/add_to_form" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/button_form_undo"
+        android:id="@+id/undo_from_form"
+        android:layout_alignBottom="@+id/add_from_form"
+        android:layout_toRightOf="@+id/add_from_form"
+        android:layout_toEndOf="@+id/add_from_form"
+        android:layout_alignTop="@+id/add_from_form" />
 
 </RelativeLayout>

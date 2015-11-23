@@ -93,7 +93,6 @@ public class Conversion extends Activity {
 
                 }
                 else  {
-
                     answer.setText("");
                 }
             }

@@ -18,6 +18,9 @@
     <string name="edit_text_unit_2_name">Unit 2 Name</string>
     <string name="text_view_to_formula">To Formula</string>
     <string name="text_view_from_formula">From Formula</string>
+    <string name="button_create_conversion">Create conversion</string>
+    <string name="button_add_formula">Add</string>
+    <string name="button_form_undo">Undo</string>
 
     <string-array name="spinner_conversions">
         <item>New</item>

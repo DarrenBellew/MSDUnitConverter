@@ -1,17 +1,22 @@
 package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-public class CreateConversion extends Activity implements AdapterView.OnItemSelectedListener {
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class CreateConversion extends Activity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
 
     Spinner spinCategories;
     EditText categoryName;
@@ -21,6 +26,11 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
     TextView fromFormula;
     Spinner nextToFormula;
     Spinner nextFromFormula;
+    Button createConversion;
+    Button addToFormula;
+    Button addFromFormula;
+    Button undoToFormula;
+    Button undoFromFormula;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +40,47 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
         categoryName = (EditText) findViewById(R.id.conv_category_name);
         unit1Name = (EditText) findViewById(R.id.edit_text_unit_1);
         unit2Name = (EditText) findViewById(R.id.edit_text_unit_2);
-        toFormula = (TextView) findViewById(R.id.text_view_from_formula);
-        fromFormula = (TextView) findViewById(R.id.text_view_to_formula);
+        toFormula = (TextView) findViewById(R.id.text_view_to_formula);
+        fromFormula = (TextView) findViewById(R.id.text_view_from_formula);
         nextToFormula = (Spinner) findViewById(R.id.nextToFormula);
         nextFromFormula = (Spinner) findViewById(R.id.nextFromFormula);
+        createConversion = (Button) findViewById(R.id.button_create_conversion);
+        addToFormula = (Button) findViewById(R.id.add_to_form);
+        addFromFormula = (Button) findViewById(R.id.add_from_form);
+        undoToFormula = (Button) findViewById(R.id.undo_to_form);
+        undoFromFormula = (Button) findViewById(R.id.undo_from_form);
+        addToFormula.setOnClickListener(this);
+        addFromFormula.setOnClickListener(this);
+        undoToFormula.setOnClickListener(this);
+        undoFromFormula.setOnClickListener(this);
+        createConversion.setOnClickListener(this);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.new_category, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item);
+        adapter.addAll(getCategories());
+        adapter.add("New");
+
         spinCategories.setAdapter(adapter);
         spinCategories.setOnItemSelectedListener(this);
 
-
-        adapter = ArrayAdapter.createFromResource(this,
+        ArrayAdapter<CharSequence> adapterForm = ArrayAdapter.createFromResource(this,
                 R.array.formulaCreator, android.R.layout.simple_spinner_item);
-        nextToFormula.setAdapter(adapter);
-        nextFromFormula.setAdapter(adapter);
+        nextToFormula.setAdapter(adapterForm);
+        nextFromFormula.setAdapter(adapterForm);
+
+
+
+    }
+
+    public ArrayList<String> getCategories()  {
+        ArrayList<String> categories = new ArrayList<>();
+        String temp;
+        String key = getIntent().getExtras().getString("key");
+        for(int i=0; i<getIntent().getExtras().getInt("size"); i++)  {
+            temp = getIntent().getExtras().getString(key+i);
+            categories.add(temp);
+        }
+
+        return categories;
 
     }
 
@@ -70,6 +105,10 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
 
         return super.onOptionsItemSelected(item);
     }
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+        return false;
+    }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -83,7 +122,113 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
     }
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    public void onNothingSelected(AdapterView<?> parent) {}
+
+    @Override
+    public void onClick(View v) {
+        /*
+        createConversion = (Button) findViewById(R.id.button_create_conversion);
+        addToFormula = (Button) findViewById(R.id.add_to_form);
+        addFromFormula = (Button) findViewById(R.id.add_from_form);
+        undoToFormula = (Button) findViewById(R.id.undo_to_form);
+        undoFromFormula = (Button) findViewById(R.id.undo_from_form);
+         */
+
+        switch(v.getId())  {
+            case (R.id.button_create_conversion):  {
+                //createConversion;
+                break;
+            }
+            case (R.id.add_to_form):  {
+                //addToFormula;
+                String toAdd = nextToFormula.getSelectedItem().toString();
+                String current = toFormula.getText().toString();
+                if(current.length() >= Integer.MAX_VALUE)  {
+                    MyUtilities.makeSToast(this, "Too much characters in formula");
+                }
+                else {
+                    String temp = current + convItem(toAdd);
+                    toFormula.setText(temp);
+                }
+                break;
+            }
+            case (R.id.add_from_form):  {
+                //addFromFormula;
+                String toAdd = nextFromFormula.getSelectedItem().toString();
+                String current = fromFormula.getText().toString();
+                if(current.length() >= Integer.MAX_VALUE)  {
+                    MyUtilities.makeSToast(this, "Too much characters in formula");
+                }
+                else  {
+                    String temp = current + convItem(toAdd);
+                    fromFormula.setText(temp);
+                }
+                break;
+            }
+            case(R.id.undo_to_form):  {
+                //undoToFormula;
+                String temp = toFormula.getText().toString();
+                if (temp.length() > 0) {
+                    temp = temp.substring(0, temp.length() - 1);
+                }
+                toFormula.setText(temp);
+                break;
+            }
+            case(R.id.undo_from_form):  {
+                //undoFromFormula;
+                String temp = fromFormula.getText().toString();
+                if (temp.length() > 0) {
+                    temp = temp.substring(0, temp.length() - 1);
+                }
+                fromFormula.setText(temp);
+                break;
+            }
+        }
+    }
+    public String convItem(String item)  {
+        String toReturn;
+        switch(item)  {
+            case("Decimal"):  {
+                toReturn = ".";
+                break;
+            }
+            case("Multiply"):  {
+                toReturn = "*";
+                break;
+            }
+            case("Divide"):  {
+                toReturn = "/";
+                break;
+            }
+            case("Addition"):  {
+                toReturn = "+";
+                break;
+            }
+            case("Subtract"):  {
+                toReturn = "-";
+                break;
+            }
+            case("Power"):  {
+                toReturn = "^";
+                break;
+            }
+            case("Open bracket"):  {
+                toReturn = "(";
+                break;
+            }
+            case("Close bracket"):  {
+                toReturn = ")";
+                break;
+            }
+            case("Unit"): {
+                toReturn = "a";
+                break;
+            }
+            default:  {
+                return item;
+            }
+        }
+        return toReturn;
 
     }
 }

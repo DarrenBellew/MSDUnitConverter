@@ -118,7 +118,6 @@ public class DBManager {
         }
         else {
             throw new SQLException("Incorrect amount of ?:params ratio");
-
         }
         return c;
     }

@@ -89,6 +89,11 @@ public class MainActivity extends Activity {
         }
         else if(id == R.id.create_conversion)  {
             Intent i = new Intent(getApplicationContext(), CreateConversion.class);
+            i.putExtra("key", "category ");
+            for(int j=0; j<categories.size(); j++)  {
+                i.putExtra("category "+j, categories.get(j));
+            }
+            i.putExtra("size", categories.size());
             startActivity(i);
 
         }
