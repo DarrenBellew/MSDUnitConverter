@@ -1,9 +1,6 @@
 package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -15,11 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import java.sql.SQLException;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 //On text change infinite loop fix reference: http://stackoverflow.com/questions/7222944/changing-text-in-android-on-text-change-causes-overflow-error
 

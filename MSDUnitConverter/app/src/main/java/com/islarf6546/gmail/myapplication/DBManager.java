@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -91,14 +92,14 @@ public class DBManager {
     public void close()  { db.close(); }
 
 
-    public long insertAny(String THIS_TABLE, String[] cols, String[] data) throws SQLException {
+    public long insertAny(String table_name, String[] cols, String[] data) throws SQLException {
         ContentValues vals = new ContentValues();
 
         for(int j=0; j<cols.length; j++)  {
             vals.put(cols[j], data[j]);
         }
 
-        return db.insert(THIS_TABLE, null, vals);
+        return db.insert(table_name, null, vals);
     }
 
     public Cursor selectSomething(String table, String constraint, String[] columns) throws SQLException  {
@@ -110,7 +111,7 @@ public class DBManager {
         return c;
     }
 
-    public Cursor selectAdvanced(String query, String[] params) throws SQLException {
+    public Cursor queryAdvanced(String query, String[] params) throws SQLException {
         Cursor c;
         if (StringUtils.countMatches(query, "?") == params.length) {
             c = db.rawQuery(query, params);
@@ -158,6 +159,7 @@ public class DBManager {
         }
         return data;
     }
+
 
 
 

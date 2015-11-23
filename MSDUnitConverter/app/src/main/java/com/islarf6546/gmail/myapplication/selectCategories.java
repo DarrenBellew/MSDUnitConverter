@@ -54,7 +54,7 @@ public class SelectCategories extends ListActivity {
 
 
             try {
-                Cursor c = dbm.selectAdvanced(clause, new String[]{item});
+                Cursor c = dbm.queryAdvanced(clause, new String[]{item});
                 //MyUtilities.makeSToast(this, "" + c.getString(0));
 
 

@@ -50,6 +50,14 @@ public class MyUtilities {
         return m;
     }
 
+    public static void insertSomething(Context context, String tableName, String[] columns, String[] data) throws SQLException  {
+        DBManager dbm = new DBManager(context);
+        dbm.open();
+        dbm.insertAny(tableName, columns, data);
+        dbm.close();
+
+    }
+
     public static Cursor selectSomething(Context context, String table, String constraint, String columns[]) throws SQLException {
         DBManager dbm = new DBManager(context);
         dbm.open();
@@ -58,10 +66,10 @@ public class MyUtilities {
         return cursor;
     }
 
-    public static Cursor selectAdvanced(Context context, String query, String[] params) throws SQLException {
+    public static Cursor queryAdvanced(Context context, String query, String[] params) throws SQLException {
         DBManager dbm = new DBManager(context);
         dbm.open();
-        Cursor cursor = dbm.selectAdvanced(query, params);
+        Cursor cursor = dbm.queryAdvanced(query, params);
         dbm.close();
         return cursor;
     }
@@ -82,6 +90,57 @@ public class MyUtilities {
         }
         return data;
     }
+
+    public static ArrayList<String> assignMaptoAList(Map<String, String> map, String[] keys)  {
+        ArrayList<String> toReturn = new ArrayList<String>();
+
+        for(int i=0; i<map.size(); i++)  {
+            toReturn.add(map.get(keys[i]));
+        }
+
+        return toReturn;
+    }
+
+    public static int getNextId(Context context, String table, String col, int tries)  {
+        String[] column = {col};
+        Cursor c;
+        try {
+            c = queryAdvanced(context, table, column);
+        }
+        catch (SQLException e)  {
+            e.printStackTrace();
+            return -1;
+        }
+
+        int last = 0;
+        for(int i=0; i<tries; i++) {
+            while (!c.isAfterLast()) {
+                int temp = c.getInt(0);
+                if (temp - last > 1) {
+                    break;
+                }
+                last = temp;
+                c.moveToNext();
+
+            }
+            last++;
+        }
+        return last;
+    }
+
+    public static int nextIdOf(int[] array)  {
+        int last = 1;
+
+        for (int temp : array) {
+            if (temp - last > 1) {
+                break;
+            }
+            last = temp;
+        }
+        return last+1;
+    }
+
+
 
 
 

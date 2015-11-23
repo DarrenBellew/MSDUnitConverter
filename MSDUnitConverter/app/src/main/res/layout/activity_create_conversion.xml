@@ -14,35 +14,39 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:layout_toStartOf="@+id/edit_text_unit_1"
+        android:layout_toLeftOf="@+id/edit_text_unit_1" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/conv_category_name"
-        android:layout_below="@+id/spinner_categories"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:hint="@string/edit_text_category"
-        android:visibility="gone"/>
+        android:visibility="invisible"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/edit_text_unit_1"
+        android:layout_alignStart="@+id/edit_text_unit_1" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/edit_text_unit_1"
-        android:layout_below="@+id/conv_category_name"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/edit_text_unit_1_name" />
+        android:hint="@string/edit_text_unit_1_name"
+        android:layout_below="@+id/spinner_categories"
+        android:layout_toLeftOf="@+id/undo_to_form"
+        android:layout_toStartOf="@+id/undo_to_form"
+        android:visibility="invisible" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/edit_text_unit_2"
+        android:hint="@string/edit_text_unit_2_name"
         android:layout_below="@+id/edit_text_unit_1"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:hint="@string/edit_text_unit_2_name" />
+        android:layout_alignLeft="@+id/edit_text_unit_1"
+        android:layout_alignStart="@+id/edit_text_unit_1"
+        android:visibility="invisible"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -59,19 +63,17 @@
         android:hint="@string/text_view_from_formula"
         android:id="@+id/text_view_from_formula"
         android:layout_below="@+id/nextToFormula"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignLeft="@+id/text_view_to_formula"
+        android:layout_alignStart="@+id/text_view_to_formula" />
 
     <Spinner
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/nextToFormula"
         android:spinnerMode="dropdown"
-        android:layout_below="@+id/text_view_to_formula"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button_create_conversion"
-        android:layout_alignEnd="@+id/button_create_conversion" />
+        android:layout_below="@+id/text_view_to_formula" />
 
     <Spinner
         android:layout_width="wrap_content"
@@ -79,18 +81,15 @@
         android:id="@+id/nextFromFormula"
         android:layout_below="@+id/text_view_from_formula"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/button_create_conversion"
-        android:layout_alignEnd="@+id/button_create_conversion" />
+        android:layout_alignParentStart="true" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_create_conversion"
         android:id="@+id/button_create_conversion"
-        android:layout_below="@+id/nextFromFormula"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:layout_width="wrap_content"
@@ -129,5 +128,23 @@
         android:layout_toRightOf="@+id/add_from_form"
         android:layout_toEndOf="@+id/add_from_form"
         android:layout_alignTop="@+id/add_from_form" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_unit_1"
+        android:layout_alignBottom="@+id/edit_text_unit_1"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/edit_text_unit_1"
+        android:layout_toStartOf="@+id/edit_text_unit_1" />
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_unit_2"
+        android:layout_above="@+id/text_view_to_formula"
+        android:layout_toLeftOf="@+id/edit_text_unit_1"
+        android:layout_toStartOf="@+id/edit_text_unit_1" />
 
 </RelativeLayout>

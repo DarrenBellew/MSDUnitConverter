@@ -14,11 +14,14 @@ import android.widget.ListView;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MainActivity extends Activity {
 
 
-    ArrayList<String> categories = new ArrayList<>();//new ArrayAdapter<String>();
+    ArrayList<String> categoriesList = new ArrayList<>();//new ArrayAdapter<String>();
+    Map<String, Integer> categoryMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("tag", "text");
@@ -30,15 +33,16 @@ public class MainActivity extends Activity {
         try {
             dbm.open();
 
-            Cursor c = dbm.selectSomething("category", "", new String[]{"CategoryName"});
+            Cursor c = dbm.selectSomething("category", "", new String[]{"categoryId", "CategoryName"});
             while (!c.isAfterLast()) {
-                categories.add(c.getString(0));
+                categoryMap.put(c.getString(1), c.getInt(0));
+                categoriesList.add(c.getString(0));
                 c.moveToNext();
             }
         }
         catch (SQLException e)  {
             e.getStackTrace();
-            categories.add("DATABASE READ CATEGORIES ERROR!");
+            categoriesList.add("DATABASE READ CATEGORIES ERROR!");
             MyUtilities.makeLToast(this, "No categories exist? try reinstall the app completely!");
             finish();
         }
@@ -50,7 +54,7 @@ public class MainActivity extends Activity {
         //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
         ArrayAdapter<String> myAdapter = new MyAdapter(
                 this,
-                categories);
+                categoriesList);
 
         ListView l = (ListView) findViewById(android.R.id.list);
 
@@ -89,11 +93,16 @@ public class MainActivity extends Activity {
         }
         else if(id == R.id.create_conversion)  {
             Intent i = new Intent(getApplicationContext(), CreateConversion.class);
-            i.putExtra("key", "category ");
-            for(int j=0; j<categories.size(); j++)  {
-                i.putExtra("category "+j, categories.get(j));
+
+            i.putExtra("idsKey", "categoryId: ");
+            for(int j=0; j<categoriesList.size(); j++)  {
+                i.putExtra("category Id: "+ j, categoryMap.get(categoriesList.get(j)));
             }
-            i.putExtra("size", categories.size());
+            i.putExtra("namesKey", "category ");
+            for(int j=0; j<categoriesList.size(); j++)  {
+                i.putExtra("category "+j, categoriesList.get(j));
+            }
+            i.putExtra("size", categoriesList.size());
             startActivity(i);
 
         }
