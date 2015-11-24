@@ -6,7 +6,9 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,7 +27,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     SwipeRefreshLayout mySwipeRefreshLayout;
     ArrayList<String> categoriesList = new ArrayList<>();//new ArrayAdapter<String>();
     Map<String, Integer> categoryMap = new HashMap<>();
-
+    ListView l;
 
 
     @Override
@@ -62,26 +64,25 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
             finish();
         }
 
-        ArrayAdapter<String> myAdapter = new MyAdapter(
-                this,
-                categoriesList);
-
-        ListView l = (ListView) findViewById(android.R.id.list);
-
+        ArrayAdapter<String> myAdapter = new MyAdapter(this, categoriesList);
+        l = (ListView) findViewById(android.R.id.list);
         l.setAdapter(myAdapter);
 
         l.setOnItemClickListener(new AdapterView.OnItemClickListener()  {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                String itemPicked = String.valueOf(parent.getItemAtPosition(position));
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+            String itemPicked = String.valueOf(parent.getItemAtPosition(position));
+            Intent i = new Intent(getApplicationContext(), SelectCategories.class);
+            i.putExtra("itemPicked", itemPicked);
+            startActivity(i);
+        }
+            });
 
-                Intent i = new Intent(getApplicationContext(), SelectCategories.class);
-                i.putExtra("itemPicked", itemPicked);
-                startActivity(i);
-            }
-        });
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -128,5 +129,52 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
     public void refreshAnimation(boolean set)  {
         mySwipeRefreshLayout.setRefreshing(false);
 
+    }
+
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)  {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater mInflater = getMenuInflater();
+        mInflater.inflate(R.menu.list_context_menu, menu);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)  {
+
+        AdapterView.AdapterContextMenuInfo menuAdapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch(item.getItemId())  {
+            case(R.id.delete_item):  {
+                Log.i("Delete Item Title: ", item.getTitle().toString());
+                Log.i("Delete Item Id: ", ""+item.getItemId());
+                Log.i("Position thing: ", "" + l.getItemAtPosition(menuAdapterInfo.position));
+
+                String category = l.getItemAtPosition(menuAdapterInfo.position).toString();
+                String convId = Integer.toString(categoryMap.get(category));
+
+                String table = "conversion";
+                String where = "categoryid = ?";
+                String[] whereClause = {convId};
+                try {
+                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
+                        throw new SQLException();
+                    }
+
+
+                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
+                        throw new SQLException();
+                    }
+                    fetchCategories();
+                }
+                catch(SQLException e)  {
+                    e.printStackTrace();
+                    MyUtilities.makeSToast(this, "Unable to delete, sql eror occurred");
+                    finish();
+                }
+            }
+        }
+        return super.onContextItemSelected(item);
     }
 }

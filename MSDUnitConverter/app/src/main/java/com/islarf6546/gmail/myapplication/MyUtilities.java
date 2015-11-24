@@ -62,6 +62,14 @@ public class MyUtilities {
         return cursor;
     }
 
+    public static int removeSomething(Context context, String table, String where, String[] whereClause) throws SQLException  {
+        DBManager db = new DBManager(context);
+        db.open();
+        int result = db.removeSomething(table, where, whereClause);
+        db.close();
+        return result;
+    }
+
     public static ArrayList<String> getColumns(Context context, String tableName) throws SQLException {
         DBManager dbm = new DBManager(context);
         ArrayList<String> columns = dbm.getColumns(context, tableName);

@@ -111,6 +111,11 @@ public class DBManager {
         return c;
     }
 
+    public int removeSomething(String table, String where, String[] whereClause) throws SQLException  {
+        //String table, String where, String[] whereClause
+        return db.delete(table, where, whereClause);
+    }
+
     public Cursor queryAdvanced(String query, String[] params) throws SQLException {
         Cursor c;
         if (StringUtils.countMatches(query, "?") == params.length) {

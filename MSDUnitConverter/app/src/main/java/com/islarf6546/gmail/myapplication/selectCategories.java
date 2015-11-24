@@ -6,6 +6,10 @@ import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -25,25 +29,26 @@ public class SelectCategories extends ListActivity {
 
     ArrayList<String> items = new ArrayList<String>();
     Map<String, Integer> conversionids = new HashMap<String, Integer>();
+
     String valName1 = "";
     String valName2 = "";
     String toFormula = "";
     String fromFormula = "";
+    ListView l;
+    String item = getIntent().getExtras().getString("itemPicked");
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         //String itemPicked = Intent.getExtras().getString("itemPicked");
         //System.out.println(itemPicked);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.category_list_layout);
-        DBManager dbm = new DBManager(this);
-        String item = getIntent().getExtras().getString("itemPicked");
 
+
+        fetchConversions();
+    }
+
+    public void fetchConversions()  {
         try {
-            dbm.open();
-
-            //String clause = getIntent().getExtras().getString("itemPicked");
-
-
             String clause = "select con.conversionId as Conversion, " +
                     "(select u1.unitName from units as u1 where u1.unitId = con.unit1Id) as Unit1Name, " +
                     "(select u2.unitName from units as u2 where u2.unitId = con.unit2Id) as Unit2Name, " +
@@ -54,7 +59,7 @@ public class SelectCategories extends ListActivity {
 
 
             try {
-                Cursor c = dbm.queryAdvanced(clause, new String[]{item});
+                Cursor c = MyUtilities.queryAdvanced(this, clause, new String[]{item});
                 //MyUtilities.makeSToast(this, "" + c.getString(0));
 
 
@@ -85,9 +90,6 @@ public class SelectCategories extends ListActivity {
             e.printStackTrace();
             finish();
         }
-        finally {
-            dbm.close();
-        }
         //categories.add("Categories");
 
         //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
@@ -95,8 +97,8 @@ public class SelectCategories extends ListActivity {
                 this,
                 items);
 
-        ListView l = (ListView) findViewById(android.R.id.list);
 
+        l = (ListView) findViewById(android.R.id.list);
         l.setAdapter(myAdapter);
 
         l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -120,7 +122,48 @@ public class SelectCategories extends ListActivity {
                 startActivity(i);
             }
         });
+        registerForContextMenu(l);
+    }
 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)  {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        MenuInflater mInflater = getMenuInflater();
+        mInflater.inflate(R.menu.list_context_menu, menu);
+
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item)  {
+
+        AdapterView.AdapterContextMenuInfo menuAdapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        switch(item.getItemId())  {
+            case(R.id.delete_item):  {
+                Log.i("Delete Item Title: ", item.getTitle().toString());
+                Log.i("Delete Item Id: ", ""+item.getItemId());
+                Log.i("Position thing: ", "" + l.getItemAtPosition(menuAdapterInfo.position));
+
+                String conversion = l.getItemAtPosition(menuAdapterInfo.position).toString();
+                String convId = Integer.toString(conversionids.get(conversion));
+
+                String table = "conversion";
+                String where = "conversionid = ?";
+                String[] whereClause = {convId};
+                try {
+                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
+                        throw new SQLException();
+                    }
+                    fetchConversions();
+                }
+                catch(SQLException e)  {
+                    e.printStackTrace();
+                    MyUtilities.makeSToast(this, "Unable to delete, sql eror occurred");
+                    finish();
+                }
+            }
+        }
+        return super.onContextItemSelected(item);
     }
 }
 
