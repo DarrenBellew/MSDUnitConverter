@@ -111,9 +111,16 @@ public class DBManager {
         return c;
     }
 
-    public int removeSomething(String table, String where, String[] whereClause) throws SQLException  {
+    public int removeSomething(String table, String whereClause, String[] whereArgs) throws SQLException  {
         //String table, String where, String[] whereClause
-        return db.delete(table, where, whereClause);
+        return db.delete(table, whereClause, whereArgs);
+    }
+    public int updateSomething(String table, String[] cols, String[] data, String whereClause, String[] whereArgs) throws SQLException  {
+        ContentValues vals = new ContentValues();
+        for(int i=0; i<cols.length; i++)  {
+            vals.put(cols[i], data[i]);
+        }
+        return db.update(table, vals, whereClause, whereArgs);
     }
 
     public Cursor queryAdvanced(String query, String[] params) throws SQLException {

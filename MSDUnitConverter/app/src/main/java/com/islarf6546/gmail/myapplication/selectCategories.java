@@ -35,7 +35,7 @@ public class SelectCategories extends ListActivity {
     String toFormula = "";
     String fromFormula = "";
     ListView l;
-    String item = getIntent().getExtras().getString("itemPicked");
+    String item;
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         //String itemPicked = Intent.getExtras().getString("itemPicked");
@@ -44,10 +44,13 @@ public class SelectCategories extends ListActivity {
         setContentView(R.layout.category_list_layout);
 
 
+        item = getIntent().getExtras().getString("itemPicked");
         fetchConversions();
+
     }
 
-    public void fetchConversions()  {
+    public void fetchConversions() {
+        items.clear();
         try {
             String clause = "select con.conversionId as Conversion, " +
                     "(select u1.unitName from units as u1 where u1.unitId = con.unit1Id) as Unit1Name, " +
@@ -57,11 +60,9 @@ public class SelectCategories extends ListActivity {
                     "where cat.categoryname = ?";
 
 
-
             try {
                 Cursor c = MyUtilities.queryAdvanced(this, clause, new String[]{item});
                 //MyUtilities.makeSToast(this, "" + c.getString(0));
-
 
                 while (!c.isAfterLast()) {
                     valName1 = c.getString(1);
@@ -77,52 +78,52 @@ public class SelectCategories extends ListActivity {
                     items.add(val);
                     c.moveToNext();
                 }
-            }
-            catch (CursorIndexOutOfBoundsException e)  {
+            } catch (CursorIndexOutOfBoundsException e) {
                 MyUtilities.makeLToast(this, "No conversions exist under: " + item);
                 e.printStackTrace();
                 finish();
             }
 
-        }
-        catch (SQLException e) {
+        } catch (SQLException e) {
             MyUtilities.makeLToast(this, "An unexpected SQL exception occurred");
             e.printStackTrace();
             finish();
         }
-        //categories.add("Categories");
+        if (items.isEmpty()) {
+            MyUtilities.makeSToast(this, "No conversions exist");
+            finish();
+        }
 
-        //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
-        ArrayAdapter<String> myAdapter = new MyAdapter(
-                this,
-                items);
-
-
-        l = (ListView) findViewById(android.R.id.list);
-        l.setAdapter(myAdapter);
-
-        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-
-                int categoryId = conversionids.get(String.valueOf(parent.getItemAtPosition(position)));
+        else  {
+            ArrayAdapter<String> myAdapter = new MyAdapter(
+                    this,
+                    items);
 
 
-                MyUtilities.makeSToast(getApplicationContext(), "you clicked conversion: " + categoryId);
+            l = (ListView) findViewById(android.R.id.list);
+            l.setAdapter(myAdapter);
 
-                //String itemPicked = String.valueOf(parent.getItemAtPosition(position));
+            l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
 
-                Intent i = new Intent(getApplicationContext(), Conversion.class);
-                //Send it via intent; why run a query to select data I've selecting already in this activity :)
-                i.putExtra("unit1Name", valName1);
-                i.putExtra("unit2Name", valName2);
-                i.putExtra("fromFormula", fromFormula);
-                i.putExtra("toFormula", toFormula);
-                startActivity(i);
-            }
-        });
-        registerForContextMenu(l);
+                    int categoryId = conversionids.get(String.valueOf(parent.getItemAtPosition(position)));
+
+
+                    MyUtilities.makeSToast(getApplicationContext(), "you clicked conversion: " + categoryId);
+
+                    Intent i = new Intent(getApplicationContext(), Conversion.class);
+                    //Send it via intent; why run a query to select data I've selecting already in this activity :)
+                    i.putExtra("unit1Name", valName1);
+                    i.putExtra("unit2Name", valName2);
+                    i.putExtra("fromFormula", fromFormula);
+                    i.putExtra("toFormula", toFormula);
+                    startActivity(i);
+                }
+            });
+            registerForContextMenu(l);
+        }
     }
 
     @Override
@@ -131,6 +132,8 @@ public class SelectCategories extends ListActivity {
 
         MenuInflater mInflater = getMenuInflater();
         mInflater.inflate(R.menu.list_context_menu, menu);
+        //first item
+        menu.getItem(0).setVisible(false);
 
     }
 
@@ -140,10 +143,6 @@ public class SelectCategories extends ListActivity {
         AdapterView.AdapterContextMenuInfo menuAdapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId())  {
             case(R.id.delete_item):  {
-                Log.i("Delete Item Title: ", item.getTitle().toString());
-                Log.i("Delete Item Id: ", ""+item.getItemId());
-                Log.i("Position thing: ", "" + l.getItemAtPosition(menuAdapterInfo.position));
-
                 String conversion = l.getItemAtPosition(menuAdapterInfo.position).toString();
                 String convId = Integer.toString(conversionids.get(conversion));
 
@@ -151,9 +150,8 @@ public class SelectCategories extends ListActivity {
                 String where = "conversionid = ?";
                 String[] whereClause = {convId};
                 try {
-                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
-                        throw new SQLException();
-                    }
+                    MyUtilities.removeSomething(this, table, where, whereClause);
+                    MyUtilities.makeSToast(this, "Delete success");
                     fetchConversions();
                 }
                 catch(SQLException e)  {

@@ -96,7 +96,7 @@
         android:layout_height="wrap_content"
         android:text="@string/button_create_conversion"
         android:id="@+id/button_create_conversion"
-        android:layout_below="@+id/nextFromFormula"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 

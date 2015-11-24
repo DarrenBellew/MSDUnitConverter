@@ -1,18 +1,26 @@
 package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.app.Fragment;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 
 import java.sql.SQLException;
@@ -21,6 +29,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 //Reference to Refresh Pull: http://www.androidhive.info/2015/05/android-swipe-down-to-refresh-listview-tutorial/
+//Reference to Dialog Box: (Android studio website) and: http://stackoverflow.com/questions/13268302/alternative-setbutton
 
 public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 
@@ -68,16 +77,17 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         l = (ListView) findViewById(android.R.id.list);
         l.setAdapter(myAdapter);
 
-        l.setOnItemClickListener(new AdapterView.OnItemClickListener()  {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position,
-                                        long id) {
-            String itemPicked = String.valueOf(parent.getItemAtPosition(position));
-            Intent i = new Intent(getApplicationContext(), SelectCategories.class);
-            i.putExtra("itemPicked", itemPicked);
-            startActivity(i);
-        }
-            });
+        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                String itemPicked = String.valueOf(parent.getItemAtPosition(position));
+                Intent i = new Intent(getApplicationContext(), SelectCategories.class);
+                i.putExtra("itemPicked", itemPicked);
+                startActivity(i);
+            }
+        });
+        registerForContextMenu(l);
 
 
     }
@@ -107,7 +117,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
 
             i.putExtra("idsKey", "categoryId: ");
             for(int j=0; j<categoriesList.size(); j++)  {
-                i.putExtra("category Id: "+ j, categoryMap.get(categoriesList.get(j)));
+                i.putExtra("categoryId: "+ j, categoryMap.get(categoriesList.get(j)));
             }
             i.putExtra("namesKey", "category ");
             for(int j=0; j<categoriesList.size(); j++)  {
@@ -147,34 +157,80 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         AdapterView.AdapterContextMenuInfo menuAdapterInfo = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId())  {
             case(R.id.delete_item):  {
-                Log.i("Delete Item Title: ", item.getTitle().toString());
-                Log.i("Delete Item Id: ", ""+item.getItemId());
-                Log.i("Position thing: ", "" + l.getItemAtPosition(menuAdapterInfo.position));
-
                 String category = l.getItemAtPosition(menuAdapterInfo.position).toString();
-                String convId = Integer.toString(categoryMap.get(category));
+                String catId = Integer.toString(categoryMap.get(category));
 
                 String table = "conversion";
                 String where = "categoryid = ?";
-                String[] whereClause = {convId};
+
+                String[] whereClause = {catId};
                 try {
-                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
-                        throw new SQLException();
-                    }
+                    MyUtilities.removeSomething(this, table, where, whereClause);
 
+                    table = "category";
+                    where = "categoryid = ?";
 
-                    if(MyUtilities.removeSomething(this, table, where, whereClause) == 0)  {
-                        throw new SQLException();
-                    }
+                    MyUtilities.removeSomething(this, table, where, whereClause);
+                    MyUtilities.makeSToast(this, "Delete success");
                     fetchCategories();
                 }
                 catch(SQLException e)  {
                     e.printStackTrace();
-                    MyUtilities.makeSToast(this, "Unable to delete, sql eror occurred");
-                    finish();
+                    MyUtilities.makeSToast(this, "Unable to delete, sql error occurred");
                 }
+            }
+            case(R.id.rename_item):  {
+                renameDialog(l.getItemAtPosition(menuAdapterInfo.position).toString());
             }
         }
         return super.onContextItemSelected(item);
     }
+
+    public void renameDialog(final String item)  {
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final EditText input = new EditText(this);
+        input.setHint("New Name");
+        alertDialog.setTitle(item)
+                .setMessage("Enter new name: ")
+                .setCancelable(false)
+                .setView(input)
+                .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        //    public static int updateSomething(Context context, String table, String[] cols, String[] newData, String whereClause, String[] whereAguments) throws SQLException {
+                        String newName = input.getText().toString();
+                        if (!newName.isEmpty()) {
+                            String table = "Category";
+                            String[] cols = {"categoryname"};
+                            String[] newData = {newName};
+                            String whereClause = "categoryid = ?";
+                            String[] whereArguments = {Integer.toString(categoryMap.get(item))};
+
+                            try {
+                                MyUtilities.updateSomething(getApplicationContext(), table, cols, newData, whereClause, whereArguments);
+                                //Refresh...
+                                fetchCategories();
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                                MyUtilities.makeSToast(getApplicationContext(), "Rename Error!");
+                                dialog.cancel();
+                            }
+
+                        } else {
+                            MyUtilities.makeSToast(getApplicationContext(), "Please enter a name");
+                        }
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                }
+            });
+        AlertDialog alert = alertDialog.create();
+        alert.show();
+
+
+    }
+
 }

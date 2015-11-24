@@ -23,6 +23,7 @@
     <string name="button_form_undo">Undo</string>
     <string name="context_menu_delete_item">Delete Item</string>
     <string name="context_menu_rename_item">Rename Item</string>
+    <string name="NewItem">New</string>
 
     <string-array name="spinner_new_item">
         <item>New</item>

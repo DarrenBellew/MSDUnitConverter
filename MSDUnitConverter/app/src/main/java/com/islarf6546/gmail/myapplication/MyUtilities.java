@@ -54,6 +54,15 @@ public class MyUtilities {
         return cursor;
     }
 
+    public static int updateSomething(Context context, String table, String[] cols, String[] newData, String whereClause, String[] whereAguments) throws SQLException {
+        DBManager dbm = new DBManager(context);
+        int toReturn;
+        dbm.open();
+            toReturn = dbm.updateSomething(table, cols, newData, whereClause, whereAguments);
+        dbm.close();
+        return toReturn;
+    }
+
     public static Cursor queryAdvanced(Context context, String query, String[] params) throws SQLException {
         DBManager dbm = new DBManager(context);
         dbm.open();
@@ -62,10 +71,10 @@ public class MyUtilities {
         return cursor;
     }
 
-    public static int removeSomething(Context context, String table, String where, String[] whereClause) throws SQLException  {
+    public static int removeSomething(Context context, String table, String whereClause, String[] whereArgs) throws SQLException  {
         DBManager db = new DBManager(context);
         db.open();
-        int result = db.removeSomething(table, where, whereClause);
+        int result = db.removeSomething(table, whereClause, whereArgs);
         db.close();
         return result;
     }

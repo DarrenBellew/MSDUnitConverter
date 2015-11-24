@@ -101,6 +101,7 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
             String temp = getIntent().getExtras().getString(key+i);
             categories.add(temp);
             int temp2 = getIntent().getExtras().getInt(idKey+i);
+            Log.i("temp: | temp2: ", temp + " | " + temp2);
             categoryIds.put(temp, temp2);
         }
         return categories;
@@ -114,7 +115,7 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
             while (!c.isAfterLast()) {
                 String t = c.getString(1);
                 units.add(t);
-                unitsIds.put(t, c.getInt(0));
+                unitsIds.put(t.toLowerCase(), c.getInt(0));
                 c.moveToNext();
             }
 
@@ -159,18 +160,6 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
         String item = parent.getItemAtPosition(position).toString();
         Log.i("Item at position: " + position, item);
 
-        /*
-        +    @Override
-+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-+        String item = parent.getItemAtPosition(position).toString();
-+        if(item == "New")  {
-+            categoryName.setVisibility(View.VISIBLE);
-+        }
-+        else  {
-+            categoryName.setVisibility(View.GONE);
-+        }
-+    }
-         */
         switch(parent.getId()) {
             case (R.id.spinner_categories): {
                 if (item.equals("New")) {
@@ -214,13 +203,6 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
 
     @Override
     public void onClick(View v) {
-        /*
-        createConversion = (Button) findViewById(R.id.button_create_conversion);
-        addToFormula = (Button) findViewById(R.id.add_to_form);
-        addFromFormula = (Button) findViewById(R.id.add_from_form);
-        undoToFormula = (Button) findViewById(R.id.undo_to_form);
-        undoFromFormula = (Button) findViewById(R.id.undo_from_form);
-         */
 
         switch(v.getId())  {
             case (R.id.button_create_conversion):  {
@@ -230,16 +212,22 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
                 String name;
                 boolean valid = true;
                 name = spinCategories.getSelectedItem().toString();
-                if(name.matches("New") && categoryName.getText().toString().matches(""))  {
-                    valid = false;
+                if (name.matches(getString(R.string.NewItem))) {
+                    if (categoryName.getText().toString().matches("")) {
+                        valid = false;
+                    }
                 }
                 name = unit1Spinner.getSelectedItem().toString();
-                if(name.matches("New") && unit1Name.getText().toString().matches(""))  {
-                    valid = false;
+                if (name.matches(getString(R.string.NewItem))) {
+                    if (unit1Name.getText().toString().matches("")) {
+                        valid = false;
+                    }
                 }
                 name = unit2Name.getText().toString();
-                if(name.matches("New") && unit2Name.getText().toString().matches(""))  {
-                    valid = false;
+                if (name.matches(getString(R.string.NewItem))) {
+                    if (unit2Name.getText().toString().matches("")) {
+                        valid = false;
+                    }
                 }
                 name = toFormula.getText().toString();
                 if(name.matches(""))  {
@@ -277,7 +265,7 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
                     }
                     //if not, get the id and put it into the HashMap.
                     else  {
-                        nextId = unitsIds.get(tempName);
+                        nextId = unitsIds.get(tempName.toLowerCase());
                         items.put("unit1id", Integer.toString(nextId));
                     }
                     //repeat for unit2name.
@@ -297,7 +285,7 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
                         }
                     }
                     else  {
-                        nextId = unitsIds.get(tempName);
+                        nextId = unitsIds.get(tempName.toLowerCase());
                         items.put("unit2id", Integer.toString(nextId));
                     }
                     items.put("toformula", toFormula.getText().toString());
@@ -317,10 +305,11 @@ public class CreateConversion extends Activity implements OnItemSelectedListener
                         }
                     }
                     else  {
-                        nextId = unitsIds.get(tempName);
+                        //This is not "String.toLowerCase()" because for some reason the string gotten from the intent
+                        //is not happy and seems to throw an exception
+                        nextId = categoryIds.get(tempName);
                         items.put("categoryid", Integer.toString(nextId));
                     }
-
 
                     //END ASSIGNING HASHMAP
                     String[] itemsToPut = {items.get("conversionid"), items.get("unit1id"), items.get("unit2id"), items.get("toformula"), items.get("fromformula"), items.get("categoryid")};
