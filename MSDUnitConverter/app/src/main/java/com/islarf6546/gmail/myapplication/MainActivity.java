@@ -2,24 +2,19 @@ package com.islarf6546.gmail.myapplication;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -31,33 +26,29 @@ import java.util.Map;
 //Reference to Refresh Pull: http://www.androidhive.info/2015/05/android-swipe-down-to-refresh-listview-tutorial/
 //Reference to Dialog Box: (Android studio website) and: http://stackoverflow.com/questions/13268302/alternative-setbutton
 
-public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
+//This is the main activity of the application, it lists the categories in the application;
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     SwipeRefreshLayout mySwipeRefreshLayout;
-    ArrayList<String> categoriesList = new ArrayList<>();//new ArrayAdapter<String>();
+    ArrayList<String> categoriesList = new ArrayList<>();
     Map<String, Integer> categoryMap = new HashMap<>();
     ListView l;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("tag", "text");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
         mySwipeRefreshLayout.setOnRefreshListener(this);
 
         fetchCategories();
-
-        //categories.add("Categories");
-
-        //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
-
     }
 
+    //Setup category ArrayList, map and setup the List.
     public void fetchCategories()  {
         categoryMap.clear();
         categoriesList.clear();
+        String error = "No categories, refresh or create one!";
         try {
             Cursor c = MyUtilities.selectSomething(this, "category", "", new String[]{"categoryId", "CategoryName"});
             while (!c.isAfterLast()) {
@@ -68,7 +59,7 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         }
         catch (SQLException e)  {
             e.getStackTrace();
-            categoriesList.add("DATABASE READ CATEGORIES ERROR!");
+            categoriesList.add(error);
             MyUtilities.makeLToast(this, "No categories exist? try reinstall the app completely!");
             finish();
         }
@@ -76,29 +67,32 @@ public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefre
         ArrayAdapter<String> myAdapter = new MyAdapter(this, categoriesList);
         l = (ListView) findViewById(android.R.id.list);
         l.setAdapter(myAdapter);
-
-        l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,
-                                    long id) {
-                String itemPicked = String.valueOf(parent.getItemAtPosition(position));
-                Intent i = new Intent(getApplicationContext(), SelectCategories.class);
-                i.putExtra("itemPicked", itemPicked);
-                startActivity(i);
-            }
-        });
-        registerForContextMenu(l);
+        //Don't setup the listener if there are no categories
+        if(!categoriesList.get(0).equals(error)) {
+            l.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position,
+                                        long id) {
+                    String itemPicked = String.valueOf(parent.getItemAtPosition(position));
+                    Intent i = new Intent(getApplicationContext(), SelectCategories.class);
+                    i.putExtra("itemPicked", itemPicked);
+                    startActivity(i);
+                }
+            });
+            registerForContextMenu(l);
+        }
 
 
     }
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+        /*getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;*/
     }
 
     @Override

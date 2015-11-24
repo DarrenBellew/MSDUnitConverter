@@ -7,7 +7,6 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,16 +14,15 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import org.apache.commons.lang3.ObjectUtils;
-
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by YamiVegeta on 15/11/2015.
- */
+//Created by Darren Bellew on 15/11/2015.
+
+//This Activity is what appears after the user selects a category on the Main Activity.
+//If a category has no conversions, they will be sent back to the main activity, along with a toast appearing.
 public class SelectCategories extends ListActivity {
 
     ArrayList<String> items = new ArrayList<String>();

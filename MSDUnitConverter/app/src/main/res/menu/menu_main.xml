@@ -1,19 +1,24 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".MainActivity">
+<!--Icon created with: https://iconsflow.com/-->
 
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".MainActivity">
+<!--
     <item
         android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="ifRoom|withText"
         android:icon="@drawable/settings"/>
+-->
 
+    <!-- Ignoring the ShowAsAction error | As the image icon doesn't work otherwise for some reason-->
     <item
         android:id="@+id/create_conversion"
         android:title="@string/menu_create_conversion"
-        android:orderInCategory="101"
-        app:showAsAction="never"
+        android:orderInCategory="100"
+        android:icon="@drawable/conversion"
+        app:showAsAction="ifRoom"
         />
 </menu>
