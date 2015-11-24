@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,23 +18,37 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends Activity {
+//Reference to Refresh Pull: http://www.androidhive.info/2015/05/android-swipe-down-to-refresh-listview-tutorial/
 
+public class MainActivity extends Activity implements SwipeRefreshLayout.OnRefreshListener {
 
+    SwipeRefreshLayout mySwipeRefreshLayout;
     ArrayList<String> categoriesList = new ArrayList<>();//new ArrayAdapter<String>();
     Map<String, Integer> categoryMap = new HashMap<>();
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d("tag", "text");
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DBManager dbm = new DBManager(this);
+        mySwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_refresh_layout);
+        mySwipeRefreshLayout.setOnRefreshListener(this);
 
+        fetchCategories();
+
+        //categories.add("Categories");
+
+        //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
+
+    }
+
+    public void fetchCategories()  {
+        categoryMap.clear();
+        categoriesList.clear();
         try {
-            dbm.open();
-
-            Cursor c = dbm.selectSomething("category", "", new String[]{"categoryId", "CategoryName"});
+            Cursor c = MyUtilities.selectSomething(this, "category", "", new String[]{"categoryId", "CategoryName"});
             while (!c.isAfterLast()) {
                 categoryMap.put(c.getString(1), c.getInt(0));
                 categoriesList.add(c.getString(1));
@@ -46,12 +61,7 @@ public class MainActivity extends Activity {
             MyUtilities.makeLToast(this, "No categories exist? try reinstall the app completely!");
             finish();
         }
-        finally {
-            dbm.close();
-        }
-        //categories.add("Categories");
 
-        //ArrayAdapter<String> myAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories);
         ArrayAdapter<String> myAdapter = new MyAdapter(
                 this,
                 categoriesList);
@@ -107,5 +117,16 @@ public class MainActivity extends Activity {
 
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefresh() {
+        refreshAnimation(true);
+        fetchCategories();
+        refreshAnimation(false);
+    }
+    public void refreshAnimation(boolean set)  {
+        mySwipeRefreshLayout.setRefreshing(false);
+
     }
 }

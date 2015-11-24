@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CreateConversion extends Activity implements AdapterView.OnItemSelectedListener, View.OnClickListener {
+public class CreateConversion extends Activity implements OnItemSelectedListener, View.OnClickListener  {
 
     Spinner spinCategories;
     EditText categoryName;
@@ -322,7 +323,7 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
 
 
                     //END ASSIGNING HASHMAP
-                    String[] itemsToPut = {items.get("conversionid"), items.get("unit1id"), items.get("units2id"), items.get("toformula"), items.get("fromformula"), items.get("categoryid")};
+                    String[] itemsToPut = {items.get("conversionid"), items.get("unit1id"), items.get("unit2id"), items.get("toformula"), items.get("fromformula"), items.get("categoryid")};
                     try {
                         MyUtilities.insertSomething(this, "conversion", new String[]{"conversionid", "Unit1Id", "Unit2Id", "toFormula", "fromFormula", "CategoryId"}, itemsToPut);
                         MyUtilities.makeSToast(this, "Conversion successfully created");
@@ -431,4 +432,5 @@ public class CreateConversion extends Activity implements AdapterView.OnItemSele
         return toReturn;
 
     }
+
 }

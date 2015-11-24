@@ -34,7 +34,7 @@ public class SelectCategories extends ListActivity {
         //String itemPicked = Intent.getExtras().getString("itemPicked");
         //System.out.println(itemPicked);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.category_list_layout);
         DBManager dbm = new DBManager(this);
         String item = getIntent().getExtras().getString("itemPicked");
 
