@@ -18,6 +18,7 @@
         android:layout_toStartOf="@+id/add_to_form"
         android:layout_toLeftOf="@+id/add_to_form" />
 
+    <!-- I set these to visible be default; yes they will flash for less than a frame, but its in-case there is No categories (all deleted) -->
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
