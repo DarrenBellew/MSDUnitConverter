@@ -42,7 +42,7 @@ public class Conversion extends Activity {
         answer = (TextView) findViewById(R.id.conv);
         answer.setHint(valName2);
         swap = (Button) findViewById(R.id.button_swap_conversion);
-        swap.setText(value1.getHint());
+        swap.setText(answer.getHint());
         swap.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String temp;

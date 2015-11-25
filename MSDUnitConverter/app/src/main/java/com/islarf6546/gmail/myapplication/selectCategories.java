@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,7 +27,8 @@ public class SelectCategories extends ListActivity {
 
     ArrayList<String> items = new ArrayList<String>();
     Map<String, Integer> conversionids = new HashMap<>();
-    Map<Integer, String> conversionNames = new HashMap<>();
+    Map<Integer, String> conversionName1 = new HashMap<>();
+    Map<Integer, String> conversionName2 = new HashMap<>();
     Map<Integer, String> toFormulabyId = new HashMap<>();
     Map<Integer, String> fromFormulabyId = new HashMap<>();
 
@@ -63,7 +65,8 @@ public class SelectCategories extends ListActivity {
                 String valName1;
                 String valName2;
                 while (!c.isAfterLast()) {
-                    conversionNames.put(c.getInt(0), c.getString(1)+"|"+c.getString(2));
+                    conversionName1.put(c.getInt(0), c.getString(1));
+                    conversionName2.put(c.getInt(0), c.getString(2));
                     valName1 = c.getString(1);
                     valName2 = c.getString(2);
                     String val = valName1 + " <-> " + valName2;
@@ -105,7 +108,9 @@ public class SelectCategories extends ListActivity {
                                         long id) {
                     int convId = conversionids.get(String.valueOf(parent.getItemAtPosition(position)));
                     //split it by "|", as setup when acquiring.
-                    String[] items = conversionNames.get(convId).split("|");
+                    String convItem1 = conversionName1.get(convId);
+                    String convItem2 = conversionName2.get(convId);
+
                     String toFormula = toFormulabyId.get(convId);
                     String fromFormula = fromFormulabyId.get(convId);
 
@@ -113,8 +118,9 @@ public class SelectCategories extends ListActivity {
 
                     Intent i = new Intent(getApplicationContext(), Conversion.class);
                     //Send it via intent; why run a query to select data I've selecting already in this activity :)
-                    i.putExtra("unit1Name", items[0]);
-                    i.putExtra("unit2Name", items[1]);
+
+                    i.putExtra("unit1Name", convItem1);
+                    i.putExtra("unit2Name", convItem2);
                     i.putExtra("fromFormula", toFormula);
                     i.putExtra("toFormula", fromFormula);
                     startActivity(i);
