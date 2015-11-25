@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -26,12 +25,12 @@ import java.util.Map;
 public class SelectCategories extends ListActivity {
 
     ArrayList<String> items = new ArrayList<String>();
-    Map<String, Integer> conversionids = new HashMap<String, Integer>();
+    Map<String, Integer> conversionids = new HashMap<>();
+    Map<Integer, String> conversionNames = new HashMap<>();
+    Map<Integer, String> toFormulabyId = new HashMap<>();
+    Map<Integer, String> fromFormulabyId = new HashMap<>();
 
-    String valName1 = "";
-    String valName2 = "";
-    String toFormula = "";
-    String fromFormula = "";
+
     ListView l;
     String item;
     @Override
@@ -61,16 +60,15 @@ public class SelectCategories extends ListActivity {
             try {
                 Cursor c = MyUtilities.queryAdvanced(this, clause, new String[]{item});
                 //MyUtilities.makeSToast(this, "" + c.getString(0));
-
+                String valName1;
+                String valName2;
                 while (!c.isAfterLast()) {
+                    conversionNames.put(c.getInt(0), c.getString(1)+"|"+c.getString(2));
                     valName1 = c.getString(1);
                     valName2 = c.getString(2);
-                    String val = valName2 + " <-> " + valName1;
-                    toFormula = c.getString(3);
-                    fromFormula = c.getString(4);
-                    Log.i("to Formula: ", toFormula);
-                    Log.i("from Formula: ", fromFormula);
-
+                    String val = valName1 + " <-> " + valName2;
+                    toFormulabyId.put(c.getInt(0), c.getString(3));
+                    fromFormulabyId.put(c.getInt(0), c.getString(4));
 
                     conversionids.put(val, c.getInt(0));
                     items.add(val);
@@ -105,18 +103,20 @@ public class SelectCategories extends ListActivity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position,
                                         long id) {
+                    int convId = conversionids.get(String.valueOf(parent.getItemAtPosition(position)));
+                    //split it by "|", as setup when acquiring.
+                    String[] items = conversionNames.get(convId).split("|");
+                    String toFormula = toFormulabyId.get(convId);
+                    String fromFormula = fromFormulabyId.get(convId);
 
-                    int categoryId = conversionids.get(String.valueOf(parent.getItemAtPosition(position)));
-
-
-                    MyUtilities.makeSToast(getApplicationContext(), "you clicked conversion: " + categoryId);
+                    //MyUtilities.makeSToast(getApplicationContext(), "you clicked conversion: " + categoryId);
 
                     Intent i = new Intent(getApplicationContext(), Conversion.class);
                     //Send it via intent; why run a query to select data I've selecting already in this activity :)
-                    i.putExtra("unit1Name", valName1);
-                    i.putExtra("unit2Name", valName2);
-                    i.putExtra("fromFormula", fromFormula);
-                    i.putExtra("toFormula", toFormula);
+                    i.putExtra("unit1Name", items[0]);
+                    i.putExtra("unit2Name", items[1]);
+                    i.putExtra("fromFormula", toFormula);
+                    i.putExtra("toFormula", fromFormula);
                     startActivity(i);
                 }
             });
